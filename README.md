@@ -42,3 +42,29 @@ Ahora, si queremos desloguearnos, podemos ir a la siguiente ruta:
 ```
 http://localhost:8080/logout
 ```
+
+# Explicación del por qué al acceder al endpoint muestra un formulario
+Cuando se agrega la dependencia de Spring Security, al iniciar la aplicación
+Spring busca un objeto o bean del tipo de interfaz SecurityFilterChain, una vez 
+lo encuentra, muestra las configuraciones establecidas en él. 
+
+Por defecto Spring Security tiene un @Bean anotado en un método 
+llamado defaultSecurityFilterChain(HttpSecurity http) e internamente tiene 
+configuraciones para mostrar por defecto un Formulario y una autenticación básica, 
+precisamente esa es la configuración de seguridad que por defecto 
+Spring Security lanza al agregar la dependencia en el pom.xml, además de 
+darle un @Order(2147483642) a dicho bean, que por defecto tiene el orden más bajo.
+
+El bean mencionado se encuentra en la clase siguiente:
+```
+.../SpringBootWebSecurityConfiguration.class
+
+@Bean
+@Order(2147483642)
+SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    ((ExpressionUrlAuthorizationConfigurer.AuthorizedUrl)http.authorizeRequests().anyRequest()).authenticated();
+    http.formLogin();
+    http.httpBasic();
+    return (SecurityFilterChain)http.build();
+}
+```
