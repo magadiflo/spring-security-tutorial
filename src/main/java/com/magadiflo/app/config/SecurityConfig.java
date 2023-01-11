@@ -2,8 +2,10 @@ package com.magadiflo.app.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -92,6 +94,19 @@ public class SecurityConfig {
         authenticationProvider.setPasswordEncoder(this.passwordEncoder());
 
         return authenticationProvider;
+    }
+
+    /***
+     * Este método authenticationManager() anotado con @Bean será usado en el controller
+     * AuthenticationResource, para delegar la responsabilidad a Spring de continuar
+     * con el proceso de autenticación.
+     *
+     * Por parámetro estamos recibiendo un AuthenticationConfiguration y
+     * será Spring quien lo inyecte
+     * */
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 
     @Bean
