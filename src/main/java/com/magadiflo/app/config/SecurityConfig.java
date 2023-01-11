@@ -2,18 +2,24 @@ package com.magadiflo.app.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.Filter;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -70,8 +76,23 @@ public class SecurityConfig {
                 .anyRequest()
                 .authenticated()
                 .and()
+                .authenticationProvider(this.authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        final DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(this.userDetailsService());
+        authenticationProvider.setPasswordEncoder(this.passwordEncoder());
+
+        return authenticationProvider;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     /**
@@ -83,6 +104,22 @@ public class SecurityConfig {
      * <p>
      * 1° Crear una clase que implemente la interfaz UserDetailsService
      * 2° Crear un @Bean que retorne un UserDetailsService
+     */
+
+    /**
+     * Decirle a Spring Security que use este userDetailsService()
+     * ***********************************************************
+     * Debemos decirle a Spring Security que use este método userDetailsService()
+     * en lugar de su propia implementación.
+     * <p>
+     * Para eso creamos un nuevo @Bean del tipo AuthenticationProvider en el
+     * que le decimos que utilice nuestro this.userDetailsService(), además
+     * de decirle también que use un codificador de contraseña this.passwordEncoder(),
+     * mismo que será creado también como un @Bean.
+     * <p>
+     * Finalmente en el método securityFilterChain(...) le decimos que use
+     * nuestro authenticationProvider() que a su vez contiene nuestro
+     * userDetailsService()
      */
 
     @Bean
