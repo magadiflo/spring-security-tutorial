@@ -13,9 +13,10 @@ import java.util.List;
 @Repository
 public class UserDao {
 
+    // password: 12345 para ambos
     private final static List<UserDetails> APPLICATION_USERS = Arrays.asList(
-            new User("admin@gmail.com", "12345", Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMIN"))),
-            new User("user@gmail.com", "12345", Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")))
+            new User("admin@gmail.com", "$2a$10$u98UVvWxO3kXqlt1dP9gNeKmh3xmBj2UwJmitxO8HaK/i5vjXfZu6", Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMIN"))),
+            new User("user@gmail.com", "$2a$10$yzCRTNhP46MV4rmrYvSBvun5lHhCiuuvALdFNA.AKgMLDRfdIvAhq", Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")))
     );
 
     public UserDetails findUserByEmail(String email) {

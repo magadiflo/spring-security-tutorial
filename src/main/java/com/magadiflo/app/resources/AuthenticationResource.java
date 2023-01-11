@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationResource {
 
     private final AuthenticationManager authenticationManager;
-    private UserDao userDao;
+    private final UserDao userDao;
 
     private final JwtUtil jwtUtil;
 
