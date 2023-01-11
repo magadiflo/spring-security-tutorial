@@ -1,6 +1,7 @@
 package com.magadiflo.app.resources;
 
 import com.magadiflo.app.config.JwtUtil;
+import com.magadiflo.app.dao.UserDao;
 import com.magadiflo.app.dto.AuthenticationRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationResource {
 
     private final AuthenticationManager authenticationManager;
-    private UserDetailsService userDetailsService;
+    private UserDao userDao;
 
     private final JwtUtil jwtUtil;
 
@@ -29,7 +30,7 @@ public class AuthenticationResource {
         // Él realizará el proceso  y llamará al userDetailsService, y así sucesivamente hasta autenticar al usuario.
         // Para esto, es necesario tener una implementación o un @Bean de la interfaz AuthenticationManager
         this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        final UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getEmail());
+        final UserDetails userDetails = this.userDao.findUserByEmail(request.getEmail());
         if(userDetails != null) {
             return ResponseEntity.ok(jwtUtil.generateToken(userDetails));
         }

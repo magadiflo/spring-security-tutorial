@@ -1,10 +1,10 @@
 package com.magadiflo.app.config;
 
+import com.magadiflo.app.dao.UserDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -46,7 +46,7 @@ import java.io.IOException;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final UserDetailsService userDetailsService;
+    private final UserDao userDao;
     private final JwtUtil jwtUtil;
 
     @Override
@@ -67,7 +67,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         userEmail = this.jwtUtil.extractUsername(jwtToken);
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+            UserDetails userDetails = this.userDao.findUserByEmail(userEmail);
 
             if (this.jwtUtil.isTokenValid(jwtToken, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken =

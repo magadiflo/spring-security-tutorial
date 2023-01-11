@@ -1,5 +1,6 @@
 package com.magadiflo.app.config;
 
+import com.magadiflo.app.dao.UserDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -66,10 +67,7 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
-    private final static List<UserDetails> APPLICATION_USERS = Arrays.asList(
-            new User("admin@gmail.com", "12345", Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMIN"))),
-            new User("user@gmail.com", "12345", Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")))
-    );
+    private final UserDao userDao;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -148,10 +146,7 @@ public class SecurityConfig {
             public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
                 // En este método nos conectaremos a una BD para buscar los usuarios, pero por ahora
                 // usaremos una lista estática o usuarios en memoria para nuestra aplicación
-                return APPLICATION_USERS.stream()
-                        .filter(userDetails -> userDetails.getUsername().equals(email))
-                        .findFirst()
-                        .orElseThrow(() -> new UsernameNotFoundException("No user was found!!!"));
+                return userDao.findUserByEmail(email);
             }
         };
     }
