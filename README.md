@@ -113,3 +113,6 @@ Value: Basic dXNlcjo1YTE3MGMzNC0yNTdiLTQ4NDktYWI5Ny02ZGI1N2MwNGUyMzM=
 ```
 Ahora, si le damos en enviar, veremos que ya nos hemos autenticado y 
 podremos acceder a nuestro endpoint.
+
+**NOTA:** La autenticación básica tiene vulnerabilidades de seguridad inherentes. 
+Hay una mejor forma de proteger nuestras API de back-end y esto es usando JWT.
