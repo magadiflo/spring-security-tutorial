@@ -68,3 +68,48 @@ SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Excepti
     return (SecurityFilterChain)http.build();
 }
 ```
+# Creando nuestra autenticación básica - Basic Auth
+A la configuración que trae por defecto le quitamos el .formLogin() y 
+lo dejamos con lo demás, incluido el .httpBasic()
+```
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+            .authorizeRequests()
+            .anyRequest()
+            .authenticated()
+            .and()
+            .httpBasic();
+    return http.build();
+}
+```
+# Accediendo desde el navegador 
+Como creamos nuestro @Bean personalizado para autenticarnos, al 
+acceder al navegador ya no nos mostrará un formulario sino más bien 
+un alert solicitándonos nuestro username y password, que serán las
+mismas que usamos cuando agregamos la dependencia.
+
+# Accediendo desde postman
+Al acceder a nuestro endpoint vía postman, si ninguna otra configuración, 
+nos mostrará como respuesta el **código 401 Unauthorized**. Esto es porque
+no le hemos proporcionado las credenciales username y password.
+```
+[GET] http://localhost:8080/api/v1/greetings
+
+Status: 401 Unauthorized
+```
+Para proporcionar las credenciales debemos irnos a la opción de:
+```
+Authorization *
+Type: Basic Auth
+Username: user
+Password: 5a170c34-257b-4849-ab97-6db57c04e233 (la que viene en consola)
+```
+Ahora, si vamos a la opción de los **Headers** veremos el siguiente key=value,
+es decir, nuestras credenciales se codificaron en Base64
+```
+Key: Authorization
+Value: Basic dXNlcjo1YTE3MGMzNC0yNTdiLTQ4NDktYWI5Ny02ZGI1N2MwNGUyMzM=
+```
+Ahora, si le damos en enviar, veremos que ya nos hemos autenticado y 
+podremos acceder a nuestro endpoint.
