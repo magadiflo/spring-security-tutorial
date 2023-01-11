@@ -28,6 +28,20 @@ import java.io.IOException;
  * Debemos implementar el método doFilterInternal(...) del filtro para
  * decirle a Spring lo que debemos hacer cuando interceptamos la solicitud.
  */
+
+/**
+ * Decirle a Spring Security que use este Filtro
+ * **********************************************
+ * Debemos decirle a Spring que use este filtro para
+ * filtrar todas las solicitudes entrantes a nuestra aplicación.
+ * Para eso debemos utilizar la clase SecurityConfig y en el método
+ * securityFilterChain(...) agregar este filtro. Pero este filtro
+ * lo debemos agregar antes de otro filtro, para eso usamos el
+ * addFilterBefore().
+ *
+ * Nuestro filtro debe estar antes del filtro
+ * UsernamePasswordAuthenticationFilter.class
+ */
 @RequiredArgsConstructor
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
